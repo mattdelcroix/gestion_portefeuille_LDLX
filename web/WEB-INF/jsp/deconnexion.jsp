@@ -1,7 +1,7 @@
 <%-- 
     Document   : deconnexion
     Created on : 1 juin 2020, 17:09:38
-    Author     : faycal
+    Author     : Matthieu
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>

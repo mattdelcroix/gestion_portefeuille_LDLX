@@ -1,7 +1,7 @@
 <%-- 
     Document   : confirm
     Created on : 5 mars 2018, 22:16:48
-    Author     : faycal
+    Author     : Matthieu
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
