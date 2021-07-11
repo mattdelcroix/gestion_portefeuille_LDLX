@@ -7,7 +7,7 @@
     <property name="hibernate.connection.url">jdbc:derby://localhost:1527/sample</property>
     <property name="hibernate.connection.username">app</property>
     <property name="hibernate.connection.password">app</property>
-    <mapping resource="DAO/old_DiscountCode.hbm.xml"/>
+    <mapping resource="DAO/DiscountCode.hbm.xml"/>
     <mapping resource="DAO/Product.hbm.xml"/>
     <mapping resource="DAO/PurchaseOrder.hbm.xml"/>
     <mapping resource="DAO/Manufacturer.hbm.xml"/>

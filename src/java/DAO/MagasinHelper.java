@@ -34,7 +34,7 @@ public class MagasinHelper {
             session.flush();
             
              tx=session.beginTransaction();
-           Query q=session.createQuery("select customerId, name, addressline1,addressline2,zip, discountCode from Customer");
+           Query q=session.createQuery("select customerId, name, addressline1,addressline2,zip, discountCode  from Customer");
             //Query q=session.createQuery("from Customer");
             resultat=q.list();
             
@@ -52,7 +52,7 @@ public class MagasinHelper {
     
     
     public List getClients(String name){
-        List resultat=null;
+        List <Customer> resultat=null;
         Transaction tx=null;
         try{
             if(!session.isOpen())session=HibernateUtil.getSessionFactory().openSession();
@@ -236,7 +236,7 @@ List resultat=null;
         }
         return resultat;
 }
-public void insertCustomer  (int _customerId, char _discountCode, String _zip) {
+/*public void insertCustomer  (int _customerId, char _discountCode, String _zip) {
     
     Transaction tx=null;
         try{
@@ -257,10 +257,10 @@ public void insertCustomer  (int _customerId, char _discountCode, String _zip) {
            if (session.isOpen())session.close();
         }
     
-}
+}*/
 
 
-public void updateCustomer  (int _customerId, char discountCode, String _name, String _adress, String _addressline2, String _zip) {
+/*public void updateCustomer  (int _customerId, String _name, String _adress, String _addressline2, String _zip) {
     
     Transaction tx=null;
         try{
@@ -268,7 +268,55 @@ public void updateCustomer  (int _customerId, char discountCode, String _name, S
             session.flush();
             
              tx=session.beginTransaction();
-             Customer a =new Customer(_customerId, discountCode, _name, _adress, _addressline2,_zip );
+             Customer a =new Customer(_customerId, _name, _adress, _addressline2,_zip);
+             session.update(a);
+             tx.commit();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+            throw e;
+        }
+      finally{
+           if (session.isOpen())session.close();
+        }
+    
+}*/
+
+public void insertCustomer (int _customerId, String _name, String _adress, String address2, String _discountCode, String _zip) {
+    
+    Transaction tx=null;
+        try{
+            if(!session.isOpen())session=HibernateUtil.getSessionFactory().openSession();
+            session.flush();
+            
+             tx=session.beginTransaction();
+             Customer a =new Customer(_customerId,_name, _adress, address2, _discountCode, _zip);
+             System.out.println(a.getZip());
+             session.save(a);
+             tx.commit();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+            throw e;
+        }
+      finally{
+           if (session.isOpen())session.close();
+        }
+    
+}
+
+public void updateCustomer (int _customerId, String _name, String _adress, String address2, String _discountCode, String _zip) {
+    
+    Transaction tx=null;
+        try{
+            if(!session.isOpen())session=HibernateUtil.getSessionFactory().openSession();
+            session.flush();
+            
+             tx=session.beginTransaction();
+             Customer a =new Customer(_customerId,_name, _adress, address2, _discountCode, _zip);
+             System.out.println(a.getZip());
              session.update(a);
              tx.commit();
         }
@@ -284,6 +332,29 @@ public void updateCustomer  (int _customerId, char discountCode, String _name, S
 }
 
 
+public void insertProduct (int productId, int manufacturerId, String productCode, BigDecimal purchaseCost, Integer quantityOnHand, BigDecimal markup, String available, String description) {
+    
+    Transaction tx=null;
+        try{
+            if(!session.isOpen())session=HibernateUtil.getSessionFactory().openSession();
+            session.flush();
+            
+             tx=session.beginTransaction();
+             Product a =new Product(productId, manufacturerId, productCode, purchaseCost, quantityOnHand, markup, available, description);
+             session.save(a);
+             tx.commit();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+            throw e;
+        }
+      finally{
+           if (session.isOpen())session.close();
+        }
+    
+}
+
 
 public void updateProduct (int productId, int manufacturerId, String productCode, BigDecimal purchaseCost, Integer quantityOnHand, BigDecimal markup, String available, String description) {
     
@@ -295,6 +366,30 @@ public void updateProduct (int productId, int manufacturerId, String productCode
              tx=session.beginTransaction();
              Product a =new Product(productId, manufacturerId, productCode, purchaseCost, quantityOnHand, markup, available, description);
              session.update(a);
+             tx.commit();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+            throw e;
+        }
+      finally{
+           if (session.isOpen())session.close();
+        }
+    
+}
+
+
+public void insertPurchaseOrder(int orderNum, int customerId, int productId, Short quantity, BigDecimal shippingCost, java.util.Date salesDate, java.util.Date shippingDate, String freightCompany) {
+    
+    Transaction tx=null;
+        try{
+            if(!session.isOpen())session=HibernateUtil.getSessionFactory().openSession();
+            session.flush();
+            
+             tx=session.beginTransaction();
+             PurchaseOrder a =new PurchaseOrder(orderNum, customerId, productId, quantity, shippingCost, salesDate, shippingDate, freightCompany);
+             session.save(a);
              tx.commit();
         }
         catch (Exception e) {
@@ -332,17 +427,26 @@ public void updatePurchaseOrder(int orderNum, int customerId, int productId, Sho
     
 }
 
-public Customer getClient(int id){   
+
+
+
+
+
+
+
+
+public List getClient(int id){   
    
-   Customer client=null;
+   List<Customer> client=null;
     Transaction tx=null;
         try{
             if(!session.isOpen())session=HibernateUtil.getSessionFactory().openSession();
             session.flush();
             tx=session.beginTransaction();
-           Query q=session.createQuery("select customerId, name, addressline1,addressline2,zip, discountCode from Customer where customerId =:_id");
+           Query q=session.createQuery("from Customer where customerId = :_id"); //select customerId, name, addressline1, addressline2, zip
            q.setInteger("_id", id);
-           client = (Customer) q.list().iterator().next();
+           System.out.println(q.list().size());
+           client = q.list();//.iterator().next();
       }
        catch (Exception e) {
         e.printStackTrace();
@@ -353,6 +457,17 @@ public Customer getClient(int id){
       
     return client;
 }
+
+
+
+
+
+
+
+
+
+
+
 public Customer getClient(String name){  
    
    Customer client=null;
@@ -361,7 +476,7 @@ public Customer getClient(String name){
             if(!session.isOpen())session=HibernateUtil.getSessionFactory().openSession();
             session.flush();
             tx=session.beginTransaction();
-           Query q=session.createQuery("select customerId, name, addressline1,addressline2,zip, discountCode from Customer where a.name =:_name");
+           Query q=session.createQuery("from Customer where a.name =:_name"); //select customerId, name, addressline1,addressline2,zip 
            q.setString("_name", name);
            if(q.list().size() > 0) client=(Customer)q.list().iterator().next();
       }

@@ -22,7 +22,7 @@
         <br/>
         <h1>Ajouter un élément dans la ${typeListe}</h1>
         
-        <form name="save" method="POST">
+        <form name="save" action="save.htm" method="POST">
             <input type="hidden" value="${typeListe}" name="typeListe" /> <!-- Cet attribut va permettre au controlleur de savoir quel type d'objet est traité -->            
             <c:forEach var="colonne" items="${colonnes}" varStatus="row">
                 <p>

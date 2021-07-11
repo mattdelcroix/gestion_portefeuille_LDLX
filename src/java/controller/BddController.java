@@ -178,7 +178,10 @@ public class BddController extends MultiActionController {
             
             //On récupère l'identifiant de l'entrée à supprimer et on l'envoie en parametre de la méthode deleteCustomer.
             //Afin d'accroitre la sécurité, nous pourrions envisager de développer la méthode deleteCustomer afin de controller tous les champs avant la suppression.
-            new MagasinHelper().updateCustomer(parseInt(request.getParameter("customerId")), (char) parseInt(request.getParameter("discountCode")), request.getParameter("name"), request.getParameter("addressline1"), request.getParameter("addressline2"), request.getParameter("zip"));             
+            //int _customerId, String _name, String _adress, String addressline2, String _discountCode, String _zip
+            System.out.println("zip : " + request.getParameter("zip"));
+            new MagasinHelper().updateCustomer(parseInt(request.getParameter("customerId")), request.getParameter("name"), request.getParameter("addressline1"), request.getParameter("addressline2"), request.getParameter("discountCode"), request.getParameter("zip"));             
+           //, request.getParameter("discountCode").charAt(0)
             break;            
           
 	case "Liste Produits":
@@ -205,14 +208,6 @@ public class BddController extends MultiActionController {
                  formatter.parse(request.getParameter("shippingDate")),request.getParameter("freightCompany")); 
             break;             
       }       
-     
-       /*String param1 = request.getParameter("nom");
-        String param2 = request.getParameter("adresse");
-        String param3 = request.getParameter("telephone");
-        String param4 = request.getParameter("email");
-        String param5 = request.getParameter("code_remise");
-        String param6 = request.getParameter("CP");
-       new MagasinHelper().insertCustomer(30000, param5.charAt(0), param6);*/
        return new ModelAndView("confirm").addObject("confirm","enregistrement effectué");
    
    }
@@ -279,6 +274,7 @@ public class BddController extends MultiActionController {
      List<String> column = new ArrayList();     
      List<String> result = new ArrayList(); 
      
+     
      ModelAndView mv = new ModelAndView("detail");
      
      switch(request.getParameter("operation"))
@@ -289,9 +285,13 @@ public class BddController extends MultiActionController {
             //Récupération du client choisi via le DAO Helper et sa méthode getClient()
             
             System.out.println("id" + request.getParameter("num"));
-            Customer client = (Customer) new MagasinHelper().getClients(parseInt(request.getParameter("num"))).get(0);           
+            List<Customer> clients = new MagasinHelper().getClient(parseInt(request.getParameter("num"))); 
             
-            System.out.println("id" + client.getCustomerId());
+            
+            System.out.println(clients.size());
+            
+            Customer client = clients.get(0);
+            
             //Utilisation de la reflexion Java
             Class<Customer> customer = Customer.class;            
             
@@ -440,13 +440,55 @@ public class BddController extends MultiActionController {
    
     public ModelAndView save(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-       String param1 = request.getParameter("nom");
-        String param2 = request.getParameter("adresse");
-        String param3 = request.getParameter("telephone");
-        String param4 = request.getParameter("email");
-        String param5 = request.getParameter("code_remise");
-        String param6 = request.getParameter("CP");
-       new MagasinHelper().insertCustomer(30000, param5.charAt(0), param6);
+       // Gestion du cast BigDecimal
+    DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+    symbols.setGroupingSeparator(',');
+    symbols.setDecimalSeparator('.');
+    String pattern = "#,##0.0#";
+    DecimalFormat decimalFormat = new DecimalFormat(pattern, symbols);
+    decimalFormat.setParseBigDecimal(true);
+    
+    // Gestion du cast du format Date
+    SimpleDateFormat formatter = new SimpleDateFormat("yyy-mm-dd", Locale.ENGLISH);
+     
+     switch(request.getParameter("typeListe"))
+     {
+        case "Liste Clients":
+            //On vérifie que les données du formulaire sont présent
+            for(int i=0; i < ColonnesClient.size(); i++){
+                if(request.getParameter(ColonnesClient.get(i)).equals("")) return new ModelAndView("error"); 
+            }           
+            
+            //On récupère l'identifiant de l'entrée à supprimer et on l'envoie en parametre de la méthode deleteCustomer.
+            //Afin d'accroitre la sécurité, nous pourrions envisager de développer la méthode deleteCustomer afin de controller tous les champs avant la suppression.
+            new MagasinHelper().insertCustomer(parseInt(request.getParameter("customerId")), request.getParameter("name"), request.getParameter("addressline1"), request.getParameter("addressline2"), request.getParameter("discountCode"), request.getParameter("zip"));             
+           //, request.getParameter("discountCode").charAt(0)
+            break;            
+          
+	case "Liste Produits":
+            //On vérifie que les données du formulaire sont présent
+            for(int i=0; i < ColonnesProduit.size(); i++){
+                if(request.getParameter(ColonnesProduit.get(i)).equals("")) return new ModelAndView("error"); 
+            }     
+            
+            //On récupère l'identifiant de l'entrée à supprimer et on l'envoie en parametre de la méthode updateProduct.
+            //Afin d'accroitre la sécurité, nous pourrions envisager de développer la méthode updateProduct afin de controller tous les champs avant la suppression.
+            new MagasinHelper().insertProduct(parseInt(request.getParameter("productId")), parseInt(request.getParameter("manufacturerId")),request.getParameter("productCode"), (BigDecimal) decimalFormat.parse(request.getParameter("purchaseCost")), parseInt(request.getParameter("quantityOnHand")), (BigDecimal) decimalFormat.parse(request.getParameter("markup")), request.getParameter("available"), request.getParameter("description"));
+            break;       
+            
+	case "Liste Ventes":
+            //On vérifie que les données du formulaire sont présent
+            for(int i=0; i < ColonnesVente.size(); i++){
+                if(request.getParameter(ColonnesVente.get(i)).equals("")) return new ModelAndView("error"); 
+            }            
+            
+            //On récupère l'identifiant de l'entrée à supprimer et on l'envoie en parametre de la méthode deleteCustomer.
+            //Afin d'accroitre la sécurité, nous pourrions envisager de développer la méthode deleteCustomer afin de controller tous les champs avant la suppression.
+            new MagasinHelper().insertPurchaseOrder(parseInt(request.getParameter("orderNum")),parseInt(request.getParameter("customerId")),parseInt(request.getParameter("productId")),
+                 parseShort(request.getParameter("quantity")),(BigDecimal) decimalFormat.parse(request.getParameter("shippingCost")),formatter.parse(request.getParameter("salesDate")),
+                 formatter.parse(request.getParameter("shippingDate")),request.getParameter("freightCompany")); 
+            break;           
+      }       
        return new ModelAndView("confirm").addObject("confirm","enregistrement effectué");
    
    }

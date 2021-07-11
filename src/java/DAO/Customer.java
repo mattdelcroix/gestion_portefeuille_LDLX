@@ -42,20 +42,20 @@ public class Customer implements java.io.Serializable {
        this.email = email;
        this.creditLimit = creditLimit;
     }
-      public Customer(int customerId,char discountCode, String name,String addressline1, String addressline2, String zip) {
+      public Customer(int customerId, String name,String addressline1, String addressline2, String discountCode, String zip) {
        this.customerId = customerId;
-       this.name = name;       
-       this.zip = zip;
+       this.discountCode = discountCode.charAt(0);
+       this.name = name;
        this.addressline1 = addressline1;
        this.addressline2 = addressline2;
        this.city = city;
        this.state = state;
        this.phone = phone;
        this.fax = fax;
+       this.zip = zip;
        this.email = email;
-       this.creditLimit = creditLimit;       
-       this.discountCode = discountCode;
-    }   
+       this.creditLimit = creditLimit;
+    } 
    
     public int getCustomerId() {
         return this.customerId;
