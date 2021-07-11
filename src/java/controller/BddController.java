@@ -285,12 +285,8 @@ public class BddController extends MultiActionController {
             //Récupération du client choisi via le DAO Helper et sa méthode getClient()
             
             System.out.println("id" + request.getParameter("num"));
-            List<Customer> clients = new MagasinHelper().getClient(parseInt(request.getParameter("num"))); 
-            
-            
-            System.out.println(clients.size());
-            
-            Customer client = clients.get(0);
+            List<Customer> clients = new MagasinHelper().getClient(parseInt(request.getParameter("num")));             
+            Customer client = clients.get(0);            
             
             //Utilisation de la reflexion Java
             Class<Customer> customer = Customer.class;            
@@ -298,10 +294,10 @@ public class BddController extends MultiActionController {
             for(int i=0; i < column.size(); i++){
                 //Ici, nous utilisons le principe d'hidratation afin d'invoquer toutes les méthodes de la classe Client.
                 //Ce principe nous permet d'alleger le code et permet une forte maintenabilité. 
-                //En utilisant ce principe, il faudra faire attention que les noms des méthodes correspondent bien à le nom de la colonne (avec la premiere lettre en majuscule) précédée de "get".
+                //En utilisant ce principe, il faudra faire attention que les noms des méthodes correspondent bien à le nom de la colonne
+                //(avec la premiere lettre en majuscule) précédée de "get".
                 //On utilisera le cast en String pour toutes les valeurs (integer compris)
                 //On remarquera qu'avec cette méthode, il est difficile de gérer les intégrités référentielle.
-                System.out.println(column.get(i));
                 result.add(String.valueOf(customer.getMethod("get" + upperCaseFirst(column.get(i))).invoke(client)));                
             }
             
